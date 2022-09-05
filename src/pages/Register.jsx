@@ -2,11 +2,14 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { auth, db, store } from "../firebase";
 import Add from "../img/addAvatar.png";
 
 const Register = () => {
   const [err, setErr] = useState(false);
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const displayName = e.target[0].value;
@@ -39,6 +42,9 @@ const Register = () => {
               email,
               photoURL: downloadURL,
             });
+
+            await setDoc(doc(db, "userChats", res.user.uid), {});
+            navigate("/");
           });
         }
       );
@@ -64,7 +70,9 @@ const Register = () => {
           <button>Sign up</button>
         </form>
         {err && <span>Somthing went wrong</span>}
-        <p>You do have an account? Login</p>
+        <p>
+          You do have an account? <Link to="/login">Login</Link>
+        </p>
       </div>
     </div>
   );
